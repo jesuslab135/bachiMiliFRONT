@@ -1,0 +1,431 @@
+{
+  "admin": [
+    {
+      "matricula": "ADMIN001",
+      "nomPila": "Juan",
+      "apPat": "Pérez",
+      "apMat": "Gómez",
+      "correo": "admin@example.com",
+      "telefono": "5551234567",
+      "contrasena": "mi_contraseña_segura"
+    }
+  ],
+  "periodos": [
+    {
+      "clave": 1,
+      "fechaInicio": "2024-01-01",
+      "fechaCierre": "2024-06-30"
+    },
+    {
+      "clave": 2,
+      "fechaInicio": "2024-07-01",
+      "fechaCierre": "2024-12-31"
+    }
+  ],
+  "parciales": [
+    {
+      "clave": 1,
+      "nombre": "Primer Parcial",
+      "periodo": 1
+    },
+    {
+      "clave": 2,
+      "nombre": "Segundo Parcial",
+      "periodo": 1
+    },
+    {
+      "clave": 3,
+      "nombre": "Tercer Parcial",
+      "periodo": 1
+    }
+  ],
+  "tipoAsistencias": [
+    {
+      "codigo": "A",
+      "descripcion": "Asistió"
+    },
+    {
+      "codigo": "F",
+      "descripcion": "Faltó"
+    },
+    {
+      "codigo": "R",
+      "descripcion": "Retardo"
+    }
+  ],
+  "docentes": [
+    {
+      "matricula": "DOC001",
+      "nomPila": "Ana",
+      "apPat": "López",
+      "apMat": "Martínez",
+      "correo": "ana.lopez@example.com",
+      "telefono": "5551231234",
+      "contrasena": "contraseña_segura"
+    },
+    {
+      "matricula": "DOC002",
+      "nomPila": "Carlos",
+      "apPat": "Ramírez",
+      "apMat": "García",
+      "correo": "carlos.ramirez@example.com",
+      "telefono": "5559876543",
+      "contrasena": "otra_contraseña_segura"
+    },
+    {
+      "matricula": "DOC003",
+      "nomPila": "Lucía",
+      "apPat": "Fernández",
+      "apMat": "Díaz",
+      "correo": "lucia.fernandez@example.com",
+      "telefono": "5554567890",
+      "contrasena": "tercera_contraseña"
+    },
+    {
+      "matricula": "DOC004",
+      "nomPila": "Ernesto",
+      "apPat": "Serrano",
+      "apMat": "Perez",
+      "correo": "Ernesto.Perez@gob.edu.mx",
+      "contrasena": "Que_Pedo_Pros"
+    }
+  ],
+  "materias": [
+    {
+      "codigo": 1,
+      "nombre": "Matemáticas"
+    },
+    {
+      "codigo": 2,
+      "nombre": "Historia"
+    },
+    {
+      "codigo": 3,
+      "nombre": "Biología"
+    },
+    {
+      "codigo": 4,
+      "nombre": "Base de Datos"
+    }
+  ],
+  "grupos": [
+    {
+      "codigo": 1,
+      "nombre": "Grupo A",
+      "periodo": 1
+    },
+    {
+      "codigo": 2,
+      "nombre": "Grupo B",
+      "periodo": 1
+    },
+    {
+      "codigo": 3,
+      "nombre": "Grupo C",
+      "periodo": 1
+    },
+    {
+      "codigo": 4,
+      "nombre": "Grupo D",
+      "periodo": 1
+    }
+  ],
+  "clases": [
+    {
+      "codigo": 1,
+      "materia": 1,
+      "docente": "DOC001",
+      "grupo": 1
+    },
+    {
+      "codigo": 2,
+      "materia": 2,
+      "docente": "DOC002",
+      "grupo": 2
+    },
+    {
+      "codigo": 3,
+      "materia": 3,
+      "docente": "DOC003",
+      "grupo": 3
+    },
+    {
+      "codigo": 4,
+      "materia": 4,
+      "docente": "DOC004",
+      "grupo": 4
+    }
+  ],
+  "alumnos": [
+    {
+      "matricula": "ALU001",
+      "nomPila": "Pedro",
+      "apPat": "González",
+      "apMat": "López",
+      "correo": "pedro.gonzalez@example.com",
+      "contrasena": "password123",
+      "grupo": 1
+    },
+    {
+      "matricula": "ALU002",
+      "nomPila": "María",
+      "apPat": "Martínez",
+      "apMat": "Sánchez",
+      "correo": "maria.martinez@example.com",
+      "contrasena": "password456",
+      "grupo": 2
+    },
+    {
+      "matricula": "ALU003",
+      "nomPila": "Luis",
+      "apPat": "Hernández",
+      "apMat": "Díaz",
+      "correo": "luis.hernandez@example.com",
+      "contrasena": "password789",
+      "grupo": 3
+    },
+    {
+      "matricula": "ALU004",
+      "nomPila": "Jesús Ernesto",
+      "apPat": "Barrera",
+      "apMat": "Almeida",
+      "correo": "Jesus.Ernesto@gob.edu.mx",
+      "contrasena": "Que_Tal",
+      "grupo": 4
+    },
+    {
+      "matricula": "ALU005",
+      "nomPila": "Fernando",
+      "apPat": "Delgado",
+      "apMat": "Lopez",
+      "correo": "Fernando.Delgado@gob.edu.mx",
+      "contrasena": "Para_Que_Intentamos",
+      "grupo": 2
+    },
+    {
+      "matricula": "ALU006",
+      "nomPila": "Juan",
+      "apPat": "Olmos",
+      "apMat": "Najera",
+      "correo": "Juan.Najera@gob.edu.mx",
+      "contrasena": "Juan_Olmos",
+      "grupo": 1
+    },
+    {
+      "matricula": "ALU007",
+      "nomPila": "Andrea",
+      "apPat": "Suarez",
+      "apMat": "Morales",
+      "correo": "andrea.suarez@example.com",
+      "contrasena": "password654",
+      "grupo": 3
+    },
+    {
+      "matricula": "ALU008",
+      "nomPila": "Miguel",
+      "apPat": "Torres",
+      "apMat": "Jiménez",
+      "correo": "miguel.torres@example.com",
+      "contrasena": "password321",
+      "grupo": 4
+    }
+  ],
+  "asistencias": [
+    {
+      "codigo": 1,
+      "dia": "2024-03-01",
+      "parcial": 1,
+      "tipoAsistencia": "A",
+      "alumno": "ALU001",
+      "clase": 1
+    },
+    {
+      "codigo": 2,
+      "dia": "2024-03-02",
+      "parcial": 1,
+      "tipoAsistencia": "F",
+      "alumno": "ALU002",
+      "clase": 2
+    },
+    {
+      "codigo": 3,
+      "dia": "2024-03-03",
+      "parcial": 1,
+      "tipoAsistencia": "R",
+      "alumno": "ALU003",
+      "clase": 3
+    }
+  ],
+  "tipoActividades": [
+    {
+      "clave": "E",
+      "descripcion": "Examen"
+    },
+    {
+      "clave": "T",
+      "descripcion": "Tarea"
+    },
+    {
+      "clave": "P",
+      "descripcion": "Proyecto"
+    }
+  ],
+  "criterios": [
+    {
+      "codigo": 1,
+      "valorPorcentaje": 30,
+      "clase": 1,
+      "tipo": "E",
+      "parcial": 1
+    },
+    {
+      "codigo": 2,
+      "valorPorcentaje": 20,
+      "clase": 2,
+      "tipo": "T",
+      "parcial": 2
+    },
+    {
+      "codigo": 3,
+      "valorPorcentaje": 50,
+      "clase": 3,
+      "tipo": "P",
+      "parcial": 3
+    }
+  ],
+  "calificaciones": [
+    {
+      "clave": 1,
+      "parcial1": 10,
+      "parcial2": 10,
+      "parcial3": 10,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU001",
+      "clase": 1
+    },
+    {
+      "clave": 2,
+      "parcial1": 10,
+      "parcial2": 7,
+      "parcial3": 10,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU002",
+      "clase": 2
+    },
+    {
+      "clave": 3,
+      "parcial1": 8,
+      "parcial2": 9,
+      "parcial3": 9,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU003",
+      "clase": 3
+    },
+    {
+      "clave": 4,
+      "parcial1": 10,
+      "parcial2": 10,
+      "parcial3": 10,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU006",
+      "clase": 1
+    },
+    {
+      "clave": 5,
+      "parcial1": 9,
+      "parcial2": 8,
+      "parcial3": 7,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU004",
+      "clase": 4
+    },
+    {
+      "clave": 6,
+      "parcial1": 6,
+      "parcial2": 5,
+      "parcial3": 7,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU005",
+      "clase": 2
+    },
+    {
+      "clave": 7,
+      "parcial1": 8,
+      "parcial2": 9,
+      "parcial3": 10,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU007",
+      "clase": 3
+    },
+    {
+      "clave": 8,
+      "parcial1": 5,
+      "parcial2": 7,
+      "parcial3": 8,
+      "remedial1": null,
+      "remedial2": null,
+      "remedial3": null,
+      "extraordinario": null,
+      "alumno": "ALU008",
+      "clase": 4
+    }
+  ],
+  "actividades": [
+    {
+      "clave": 1,
+      "descripcion": "Examen de Matemáticas",
+      "parcial": 1,
+      "tipo": "E",
+      "clase": 1
+    },
+    {
+      "clave": 2,
+      "descripcion": "Tarea de Historia",
+      "parcial": 2,
+      "tipo": "T",
+      "clase": 2
+    },
+    {
+      "clave": 3,
+      "descripcion": "Proyecto de Biología",
+      "parcial": 3,
+      "tipo": "P",
+      "clase": 3
+    }
+  ],
+  "alumnos_actividades": [
+    {
+      "alumno": "ALU001",
+      "actividad": 1
+    },
+    {
+      "alumno": "ALU002",
+      "actividad": 2
+    },
+    {
+      "alumno": "ALU003",
+      "actividad": 3
+    }
+  ]
+}

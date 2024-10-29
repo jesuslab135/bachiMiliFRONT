@@ -1,14 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function TeacherSidebar() {
+export default function AdminSidebar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [adminName, setAdminName] = useState(""); // Estado para el nombre del admin
+  const router = useRouter();
+
+  useEffect(() => {
+    // Obtén el nombre del admin desde localStorage y guárdalo en el estado
+    const name = localStorage.getItem("adminName");
+    if (name) {
+      setAdminName(name);
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminName"); // Remueve el nombre del admin al cerrar sesión
+    router.push("/"); // Redirecciona a la página de login
   };
 
   return (
@@ -21,13 +37,13 @@ export default function TeacherSidebar() {
 
         {/* Logo centrado */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <Link href="/profesor/dashboard/calificaciones">
-            <Image src="/logos/bachiller.png" alt="Logo" width={55} height={55} />
+          <Link href="/admin/dashboard/registros/alumnos">
+            <Image src="/logos/bachiller.png" alt="Admin Logo" width={55} height={55} />
           </Link>
         </div>
 
-        {/* Nombre del Profesor */}
-        <span className="text-white">Nombre del Profesor</span>
+        {/* Nombre del Admin */}
+        <span className="text-white">{adminName || "Admin"}</span>
       </header>
 
       {/* Menú lateral deslizante */}
@@ -47,19 +63,27 @@ export default function TeacherSidebar() {
 
         <ul className="mt-16 space-y-4 p-4">
           <li>
-            <Link href="/profesor/dashboard/calificaciones" className="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-              <i className="fas fa-box mr-4"></i> Calificaciones
+            <Link href="/admin/dashboard/alumnos" className="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+              <i className="fas fa-wrench mr-4"></i> Administración
             </Link>
           </li>
           <li>
-            <Link href="/profesor/dashboard/configuracion" className="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+            <Link href="/admin/dashboard/registros/alumnos" className="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+              <i className="fas fa-file-alt mr-4"></i> Registros
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/dashboard/configuraciones" className="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
               <i className="fas fa-cog mr-4"></i> Configuración
             </Link>
           </li>
           <li>
-            <Link href="/logout" className="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+            <button
+              onClick={handleLogout}
+              className="flex items-center py-2 px-4 hover:bg-blue-700 rounded w-full text-left"
+            >
               <i className="fas fa-sign-out-alt mr-4"></i> Cerrar Sesión
-            </Link>
+            </button>
           </li>
         </ul>
       </div>

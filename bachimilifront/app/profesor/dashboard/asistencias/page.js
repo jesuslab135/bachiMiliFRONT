@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation"; // Para redireccionar y obtener parámetros
 import Link from "next/link";
-import TeacherSidebar from "@/app/components/TeacherSidebar"; // Importar TeacherSidebar
+import TeacherSidebar from "@/app/components/teacher/TeacherSidebar"; // Importar TeacherSidebar
 
 export default function AsistenciasPage() {
   const [activeTab, setActiveTab] = useState("asistencias");

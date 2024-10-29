@@ -2,41 +2,116 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link"; // Importamos Link
-import TeacherSidebar from "@/app/components/TeacherSidebar";
+import Link from "next/link";
+import TeacherSidebar from "@/app/components/teacher/TeacherSidebar";
+import { fetchTestData } from "@/app/lib/fetchTestData";
 
 export default function ExtraordinariosPage() {
   const [activeTab, setActiveTab] = useState("calificaciones");
   const [currentView, setCurrentView] = useState("extraordinario");
-  const [selectedClase, setSelectedClase] = useState("");
+  const [materiaNombre, setMateriaNombre] = useState("");
+  const [grupoNombre, setGrupoNombre] = useState("");
+  const [alumnos, setAlumnos] = useState([]);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const clase = searchParams.get("clase");
-    if (clase) {
-      setSelectedClase(clase);
-    }
+    const fetchClaseData = async () => {
+      const claseId = searchParams.get("clase");
+      if (claseId) {
+        try {
+          const data = await fetchTestData();
+
+          const clase = data.clases.find((c) => c.codigo === parseInt(claseId));
+          if (clase) {
+            const materia = data.materias.find((m) => m.codigo === clase.materia);
+            const grupo = data.grupos.find((g) => g.codigo === clase.grupo);
+            const alumnosRelacionados = data.alumnos.filter((alumno) => alumno.grupo === clase.grupo);
+
+            const updatedAlumnos = alumnosRelacionados.map((alumno) => {
+              const calificaciones = data.calificaciones.find(
+                (c) => c.alumno === alumno.matricula && c.clase === parseInt(claseId)
+              );
+
+              // Verificar los valores de remediales y habilitar el dropdown de extraordinario solo cuando alguno sea menor a 6
+              const remedial1 = calificaciones?.remedial1 ?? null;
+              const remedial2 = calificaciones?.remedial2 ?? null;
+              const remedial3 = calificaciones?.remedial3 ?? null;
+              const enableExtraordinario = [remedial1, remedial2, remedial3].some((score) => score < 6 && score !== null);
+
+              return {
+                ...alumno,
+                remedial1,
+                remedial2,
+                remedial3,
+                extraordinario: enableExtraordinario ? calificaciones?.extraordinario || "" : null,
+                enableExtraordinario,
+              };
+            });
+
+            setMateriaNombre(materia ? materia.nombre : "Materia desconocida");
+            setGrupoNombre(grupo ? grupo.nombre : "Grupo desconocido");
+            setAlumnos(updatedAlumnos);
+          }
+        } catch (error) {
+          console.error("Error al obtener los datos de la clase:", error);
+        }
+      }
+    };
+
+    fetchClaseData();
   }, [searchParams]);
+
+  const handleExtraordinarioChange = (alumno, value) => {
+    const updatedAlumnos = alumnos.map((a) =>
+      a.matricula === alumno.matricula ? { ...a, extraordinario: parseInt(value) } : a
+    );
+    setAlumnos(updatedAlumnos);
+  };
+
+  const handleUpdate = async () => {
+    const extraordinarioUpdates = alumnos
+      .filter((alumno) => alumno.extraordinario !== null)
+      .map((alumno) => ({
+        alumno: alumno.matricula,
+        clase: parseInt(searchParams.get("clase")),
+        extraordinario: alumno.extraordinario,
+      }));
+
+    try {
+      const response = await fetch("/api/updateExtraordinario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(extraordinarioUpdates),
+      });
+
+      if (response.ok) {
+        alert("Extraordinarios actualizados exitosamente.");
+      } else {
+        alert("Error al actualizar los extraordinarios.");
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+      alert("Error al enviar los datos.");
+    }
+  };
 
   const goToAsistencias = () => {
     setActiveTab("asistencias");
-    router.push(`/profesor/dashboard/asistencias?clase=${selectedClase}`);
+    router.push(`/profesor/dashboard/asistencias?clase=${searchParams.get("clase")}`);
   };
 
   const showCalificaciones = () => {
     setCurrentView("parciales");
-    router.push(`/profesor/dashboard/calificaciones/parciales?clase=${selectedClase}`);
+    router.push(`/profesor/dashboard/calificaciones/parciales?clase=${searchParams.get("clase")}`);
   };
 
   const showRemedial = () => {
     setCurrentView("remedial");
-    router.push(`/profesor/dashboard/calificaciones/remediales?clase=${selectedClase}`);
+    router.push(`/profesor/dashboard/calificaciones/remediales?clase=${searchParams.get("clase")}`);
   };
 
-  const showExtraordinario = () => {
-    setCurrentView("extraordinario");
-  };
+  const showExtraordinario = () => setCurrentView("extraordinario");
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
@@ -45,7 +120,9 @@ export default function ExtraordinariosPage() {
       <div className="p-4 flex-1 mt-16 ml-64">
         <div className="bg-white p-4 rounded-lg shadow-md max-w-5xl mx-auto relative">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">{selectedClase} - Extraordinario</h3>
+            <h3 className="text-lg font-bold">
+              {materiaNombre} - {grupoNombre} - Extraordinario
+            </h3>
             <Link href="/profesor/dashboard/calificaciones" className="text-blue-600 hover:text-blue-800">
               <i className="fas fa-home fa-lg"></i>
             </Link>
@@ -93,39 +170,50 @@ export default function ExtraordinariosPage() {
             </button>
           </div>
 
-          {/* Tabla de Extraordinario */}
-          <form onSubmit={() => {}}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <table className="min-w-full bg-white border">
               <thead>
                 <tr>
                   <th className="py-2 px-4 text-gray-500 border">Alumno</th>
                   <th className="py-2 px-4 text-gray-500 border">Extraordinario</th>
-                  <th className="py-2 px-4 text-gray-500 border">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="py-2 px-4 border">
-                    <input type="text" value="Alumno 1" className="w-full px-2 py-1 text-gray-400 border rounded" disabled />
-                  </td>
-                  <td className="py-2 px-4 border">
-                    <select className="w-full px-2 py-1 text-gray-400 border rounded">
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option>
-                      <option value="10">10</option>
-                    </select>
-                  </td>
-                  <td className="py-2 px-4 border">
-                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600">
-                      Actualizar
-                    </button>
-                  </td>
-                </tr>
+                {alumnos.map((alumno) => (
+                  <tr key={alumno.matricula}>
+                    <td className="py-2 px-4 border">
+                      <input
+                        type="text"
+                        value={`${alumno.nomPila} ${alumno.apPat} ${alumno.apMat || ""}`}
+                        className="w-full px-2 py-1 text-gray-400 border rounded"
+                        disabled
+                      />
+                    </td>
+                    <td className="py-2 px-4 border">
+                      <select
+                        className="w-full px-2 py-1 text-gray-400 border rounded"
+                        value={alumno.extraordinario || ""}
+                        onChange={(e) => handleExtraordinarioChange(alumno, e.target.value)}
+                        disabled={!alumno.enableExtraordinario}
+                      >
+                        {[5, 6, 7, 8, 9, 10].map((score) => (
+                          <option key={score} value={score}>
+                            {score}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+            <button
+              type="button"
+              onClick={handleUpdate}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
+            >
+              Actualizar
+            </button>
           </form>
         </div>
       </div>
