@@ -1,76 +1,87 @@
 "use client";
 
-import { useState } from "react";
-import TeacherSidebar from "@/app/components/teacher/TeacherSidebar"; // Importamos el TeacherSidebar para el menú deslizante
+import { useState, useEffect } from "react";
+import TeacherSidebar from "@/app/components/teacher/TeacherSidebar";
+import { fetchTestData } from "@/app/lib/fetchTestData";
 
 export default function ConfiguracionesPage() {
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [teacherData, setTeacherData] = useState(null);
+
+  useEffect(() => {
+    async function loadTeacherData() {
+      const data = await fetchTestData();
+      const docente = data.docentes.find(d => d.matricula === "DOC001"); // Cambia "DOC001" por el ID adecuado
+      setTeacherData(docente);
+    }
+    loadTeacherData();
+  }, []);
 
   const openChangePasswordModal = () => setShowChangePasswordModal(true);
   const closeChangePasswordModal = () => setShowChangePasswordModal(false);
-  
-  const handlePasswordChange = (e) => {
+
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
-    closeChangePasswordModal();
-    setShowConfirmationModal(true);
+    try {
+      const response = await fetch("/api/configuraciones", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          matricula: teacherData.matricula,
+          nuevaContrasena: newPassword,
+        }),
+      });
+      if (response.ok) {
+        setShowConfirmationModal(true);
+      }
+    } catch (error) {
+      console.error("Error al actualizar la contraseña:", error);
+    } finally {
+      closeChangePasswordModal();
+    }
   };
 
   const closeConfirmationModal = () => setShowConfirmationModal(false);
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      <TeacherSidebar /> {/* Incluimos el menú deslizante */}
+      <TeacherSidebar />
 
-      {/* Contenido principal */}
-      <div className="p-4 flex-1 mt-16 ml-64"> {/* mt-16 y ml-64 para espacio con sidebar */}
+      <div className="p-4 flex-1 mt-16 ml-64">
         <div className="bg-white p-6 rounded-lg shadow-md max-w-5xl mx-auto">
-          {/* Título de la página */}
           <h2 className="text-2xl font-semibold mb-4 text-gray-500">Configuraciones</h2>
-
-          {/* Mensaje de información */}
-          <div className="bg-gray-100 p-4 rounded-lg mb-6 flex items-start">
-            <i className="fas fa-info-circle text-gray-600 text-2xl mr-4"></i>
-            <div>
-              <h3 className="font-semibold text-gray-700">Información importante</h3>
-              <p className="text-gray-600">
-                Recuerda que los cambios realizados en esta sección, solo deben ser realizados por el propietario de esta cuenta.
-              </p>
+          
+          {teacherData && (
+            <div className="bg-white border border-gray-200 p-4 rounded-lg text-gray-500">
+              <h3 className="text-xl font-semibold mb-4">Usuario</h3>
+              <p className="text-gray-800"><strong>Usuario:</strong> {teacherData.matricula}</p>
+              <p className="text-gray-800 mb-4"><strong>Cuenta institucional:</strong> {teacherData.correo}</p>
+              <button
+                onClick={openChangePasswordModal}
+                className="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700"
+              >
+                Cambiar Contraseña
+              </button>
             </div>
-          </div>
-
-          {/* Información de usuario */}
-          <div className="bg-white border border-gray-200 p-4 rounded-lg text-gray-500">
-            <h3 className="text-xl font-semibold mb-4">Usuario</h3>
-            <p className="text-gray-800"><strong>Usuario:</strong> 0322103778</p>
-            <p className="text-gray-800 mb-4"><strong>Cuenta institucional:</strong> 0322103778@ut-tijuana.edu.mx</p>
-            <button
-              onClick={openChangePasswordModal}
-              className="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700"
-            >
-              Cambiar Contraseña
-            </button>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Modal de Cambiar Contraseña */}
       {showChangePasswordModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-gray-500">
             <h3 className="text-2xl font-semibold mb-6 ">Cambiar contraseña</h3>
             <form onSubmit={handlePasswordChange}>
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Contraseña</label>
+                <label className="block text-gray-700 font-semibold mb-2">Nueva Contraseña</label>
                 <input
                   type="password"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                />
-              </div>
-              <div className="mb-6">
-                <label className="block text-gray-700 font-semibold mb-2">Confirmar contraseña</label>
-                <input
-                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
@@ -94,7 +105,6 @@ export default function ConfiguracionesPage() {
         </div>
       )}
 
-      {/* Modal de Confirmación */}
       {showConfirmationModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-gray-500">

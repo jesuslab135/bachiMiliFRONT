@@ -7,7 +7,7 @@
       "apMat": "Gómez",
       "correo": "admin@example.com",
       "telefono": "5551234567",
-      "contrasena": "mi_contraseña_segura"
+      "contrasena": "Hola_Es_Nueva135"
     }
   ],
   "periodos": [
@@ -61,7 +61,7 @@
       "apMat": "Martínez",
       "correo": "ana.lopez@example.com",
       "telefono": "5551231234",
-      "contrasena": "contraseña_segura"
+      "contrasena": "Saludos_Cordiales123"
     },
     {
       "matricula": "DOC002",
@@ -112,7 +112,7 @@
     {
       "codigo": 1,
       "nombre": "Grupo A",
-      "periodo": 1
+      "periodo": "2024-01-01 - 2024-06-30"
     },
     {
       "codigo": 2,
@@ -159,8 +159,8 @@
   "alumnos": [
     {
       "matricula": "ALU001",
-      "nomPila": "Pedro",
-      "apPat": "González",
+      "nomPila": "Armando",
+      "apPat": "Perez",
       "apMat": "López",
       "correo": "pedro.gonzalez@example.com",
       "contrasena": "password123",
@@ -169,7 +169,7 @@
     {
       "matricula": "ALU002",
       "nomPila": "María",
-      "apPat": "Martínez",
+      "apPat": "Soto",
       "apMat": "Sánchez",
       "correo": "maria.martinez@example.com",
       "contrasena": "password456",
@@ -219,15 +219,6 @@
       "correo": "andrea.suarez@example.com",
       "contrasena": "password654",
       "grupo": 3
-    },
-    {
-      "matricula": "ALU008",
-      "nomPila": "Miguel",
-      "apPat": "Torres",
-      "apMat": "Jiménez",
-      "correo": "miguel.torres@example.com",
-      "contrasena": "password321",
-      "grupo": 4
     }
   ],
   "asistencias": [
@@ -296,13 +287,13 @@
   "calificaciones": [
     {
       "clave": 1,
-      "parcial1": 10,
+      "parcial1": 5,
       "parcial2": 10,
       "parcial3": 10,
-      "remedial1": null,
+      "remedial1": "",
       "remedial2": null,
       "remedial3": null,
-      "extraordinario": null,
+      "extraordinario": 7,
       "alumno": "ALU001",
       "clase": 1
     },
