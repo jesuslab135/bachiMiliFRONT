@@ -12,7 +12,7 @@ export default function EditAlumnoModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h3 className="text-2xl font-semibold mb-4">Editar Alumno</h3>
+        <h3 className="text-2xl text-gray-500 font-semibold mb-4">Editar Alumno</h3>
         <form onSubmit={handleEditSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-2">Nombre</label>
@@ -21,7 +21,7 @@ export default function EditAlumnoModal({
               name="nomPila"
               value={selectedAlumno.nomPila}
               onChange={handleEditChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           {/* Otras entradas para apPat, apMat, correo y grupo */}
@@ -31,7 +31,7 @@ export default function EditAlumnoModal({
               name="grupo"
               value={selectedAlumno.grupo}
               onChange={handleEditChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {grupos.map((grupo) => (
                 <option key={grupo.codigo} value={grupo.codigo}>

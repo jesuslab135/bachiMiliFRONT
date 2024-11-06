@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function CriteriaTable({ criterios = [], parciales = [], onUpdateCriterio }) {
+export default function CriteriaTable({ criterios = [], parciales = [], onUpdateCriterio, claseId }) {
   const [selectedCriterio, setSelectedCriterio] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,10 +20,13 @@ export default function CriteriaTable({ criterios = [], parciales = [], onUpdate
     }
   };
 
+  // Filtrar los criterios por la clase seleccionada
+  const filteredCriterios = criterios.filter((criterio) => criterio.clase === claseId);
+
   return (
     <div className="mb-6">
       <h4 className="text-lg font-semibold mb-4 text-blue-700">Criterios</h4>
-      {criterios.length > 0 ? (
+      {filteredCriterios.length > 0 ? (
         <table className="min-w-full bg-white border rounded-lg shadow-md mb-4">
           <thead>
             <tr>
@@ -33,7 +36,7 @@ export default function CriteriaTable({ criterios = [], parciales = [], onUpdate
             </tr>
           </thead>
           <tbody>
-            {criterios.map((criterio) => (
+            {filteredCriterios.map((criterio) => (
               <tr key={criterio.codigo}>
                 <td className="py-2 px-4 border text-center text-blue-700 font-semibold">{criterio.valorPorcentaje}%</td>
                 <td className="py-2 px-4 border text-center text-blue-700 font-semibold">{criterio.tipo}</td>

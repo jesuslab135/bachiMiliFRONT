@@ -33,13 +33,18 @@ export default function ParcialesPage() {
   const [calificaciones, setCalificaciones] = useState([]);
   const [selectedPeriodo, setSelectedPeriodo] = useState(null);
   const [selectedParcial, setSelectedParcial] = useState(null);
+  const [selectedParcialDates, setSelectedParcialDates] = useState({ fechaInicio: null, fechaCierre: null });
+  const [claseId, setClaseId] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const fetchData = async () => {
-      const claseId = searchParams.get("clase");
-      if (claseId) {
+      const claseParam = searchParams.get("clase");
+      const claseIdValue = parseInt(claseParam, 10);
+      setClaseId(claseIdValue);
+
+      if (claseIdValue) {
         try {
           const [
             clases,
@@ -61,7 +66,7 @@ export default function ParcialesPage() {
             getCriterios(),
           ]);
 
-          const clase = clases.find((c) => c.codigo === parseInt(claseId));
+          const clase = clases.find((c) => c.codigo === claseIdValue);
           if (clase) {
             const materia = materias.find((m) => m.codigo === clase.materia);
             const grupo = grupos.find((g) => g.codigo === clase.grupo);
@@ -69,7 +74,7 @@ export default function ParcialesPage() {
 
             const updatedAlumnos = alumnosRelacionados.map((alumno) => {
               const calificacionesAlumno = calificacionesData.find(
-                (cal) => cal.alumno === alumno.matricula && cal.clase === parseInt(claseId)
+                (cal) => cal.alumno === alumno.matricula && cal.clase === claseIdValue
               );
 
               return {
@@ -105,11 +110,30 @@ export default function ParcialesPage() {
   };
 
   const handleParcialChange = (e) => {
-    setSelectedParcial(Number(e.target.value));
+    const parcialId = Number(e.target.value);
+    setSelectedParcial(parcialId);
+
+    const selectedParcialData = parciales.find((parcial) => parcial.clave === parcialId);
+    if (selectedParcialData) {
+      setSelectedParcialDates({
+        fechaInicio: new Date(selectedParcialData.fechaInicio),
+        fechaCierre: new Date(selectedParcialData.fechaCierre),
+      });
+    }
   };
 
-  const filteredCriterios = criterios.filter((criterio) => criterio.parcial === selectedParcial);
-  const filteredParciales = parciales.filter((parcial) => parcial.periodo === selectedPeriodo); // Filtrado de parciales
+  const updateCalificacionesData = (updatedCalificacion) => {
+    setCalificaciones((prevCalificaciones) =>
+      prevCalificaciones.map((cal) =>
+        cal.clave === updatedCalificacion.clave ? updatedCalificacion : cal
+      )
+    );
+  };
+
+  const filteredCriterios = criterios.filter(
+    (criterio) => criterio.parcial === selectedParcial && criterio.clase === claseId
+  );
+  const filteredParciales = parciales.filter((parcial) => parcial.periodo === selectedPeriodo);
 
   const handleUpdateCriterio = async (codigo, updatedCriterio) => {
     try {
@@ -147,7 +171,7 @@ export default function ParcialesPage() {
             currentView={currentView}
             setCurrentView={setCurrentView}
             router={router}
-            claseId={searchParams.get("clase")}
+            claseId={claseId}
           />
 
           <div className="mb-4">
@@ -189,13 +213,21 @@ export default function ParcialesPage() {
             </select>
           </div>
 
-          <CriteriaTable criterios={filteredCriterios} parciales={filteredParciales} onUpdateCriterio={handleUpdateCriterio} />
+          <CriteriaTable
+            criterios={filteredCriterios}
+            parciales={filteredParciales}
+            onUpdateCriterio={handleUpdateCriterio}
+            claseId={claseId}
+          />
 
           <StudentsTable
             alumnos={alumnos}
             criterios={filteredCriterios}
+            selectedPeriodo={selectedPeriodo}
             selectedParcial={selectedParcial}
+            selectedParcialDates={selectedParcialDates}
             calificacionesData={calificaciones}
+            updateCalificacionesData={updateCalificacionesData}
           />
         </div>
       </div>

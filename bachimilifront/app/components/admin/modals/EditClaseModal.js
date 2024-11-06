@@ -14,7 +14,7 @@ export default function EditClaseModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h3 className="text-2xl font-semibold mb-4">Editar Clase</h3>
+        <h3 className="text-2xl text-gray-500 font-semibold mb-4">Editar Clase</h3>
         <form onSubmit={handleEditSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-2">Materia</label>
@@ -22,7 +22,7 @@ export default function EditClaseModal({
               name="materia"
               value={selectedClase.materia}
               onChange={handleEditChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {materias.map((materia) => (
                 <option key={materia.codigo} value={materia.codigo}>
@@ -37,7 +37,7 @@ export default function EditClaseModal({
               name="docente"
               value={selectedClase.docente}
               onChange={handleEditChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {docentes.map((docente) => (
                 <option key={docente.matricula} value={docente.matricula}>
@@ -52,7 +52,7 @@ export default function EditClaseModal({
               name="grupo"
               value={selectedClase.grupo}
               onChange={handleEditChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {grupos.map((grupo) => (
                 <option key={grupo.codigo} value={grupo.codigo}>
