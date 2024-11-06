@@ -1,11 +1,28 @@
-import { useState } from "react";
-import useFetchAlumnosData from "./useFetchAlumnosData";
+import { useState, useEffect } from "react";
+import { getAlumnos, getGrupos, updateAlumno, deleteAlumno } from "@/app/lib/fetchTestData";
 
 export default function useAlumnosPage() {
-  const { registros, grupos, fetchData } = useFetchAlumnosData();
+  const [registros, setRegistros] = useState([]);
+  const [grupos, setGrupos] = useState([]);
   const [selectedAlumno, setSelectedAlumno] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+
+  // Función para obtener datos de alumnos y grupos
+  const fetchData = async () => {
+    try {
+      const alumnosData = await getAlumnos();
+      const gruposData = await getGrupos();
+      setRegistros(alumnosData);
+      setGrupos(gruposData);
+    } catch (error) {
+      console.error("Error fetching student data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleEditClick = (alumno) => {
     setSelectedAlumno(alumno);
@@ -26,16 +43,10 @@ export default function useAlumnosPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/registros/alumnos", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(selectedAlumno),
-      });
+      const response = await updateAlumno(selectedAlumno.matricula, selectedAlumno);
 
-      if (response.ok) {
-        await fetchData();
+      if (response) {
+        await fetchData(); // Refresca los datos después de la actualización
         closeModal();
         setShowSuccessMessage(true);
         setTimeout(() => setShowSuccessMessage(false), 3000);
@@ -49,16 +60,10 @@ export default function useAlumnosPage() {
     if (!confirm("¿Está seguro de que desea eliminar este registro?")) return;
 
     try {
-      const response = await fetch(`/api/registros/alumnos`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ matricula: alumnoId }),
-      });
+      const response = await deleteAlumno(alumnoId);
 
-      if (response.ok) {
-        await fetchData();
+      if (response) {
+        await fetchData(); // Refresca los datos después de la eliminación
       }
     } catch (error) {
       console.error("Error al eliminar el registro:", error);

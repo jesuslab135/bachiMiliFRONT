@@ -1,15 +1,24 @@
-// ParcialesPage.js
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import TeacherSidebar from "@/app/components/teacher/TeacherSidebar";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import {
+  getClases,
+  getMaterias,
+  getGrupos,
+  getAlumnos,
+  getCalificaciones,
+  getParciales,
+  getPeriodos,
+  getCriterios,
+  updateCriterio,
+} from "@/app/lib/fetchTestData";
 import Tabs from "@/app/components/teacher/Tabs";
 import SuccessMessage from "@/app/components/teacher/SuccessMessage";
 import StudentsTable from "@/app/components/teacher/StudentsTable";
-import { generatePDF } from "@/app/hooks/teacher/pdfUtils";
+import CriteriaTable from "@/app/components/teacher/CriteriaTable";
 
 export default function ParcialesPage() {
   const [activeTab, setActiveTab] = useState("calificaciones");
@@ -18,40 +27,67 @@ export default function ParcialesPage() {
   const [grupoNombre, setGrupoNombre] = useState("");
   const [alumnos, setAlumnos] = useState([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [parciales, setParciales] = useState([]);
+  const [periodos, setPeriodos] = useState([]);
+  const [criterios, setCriterios] = useState([]);
+  const [calificaciones, setCalificaciones] = useState([]);
+  const [selectedPeriodo, setSelectedPeriodo] = useState(null);
+  const [selectedParcial, setSelectedParcial] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const fetchClaseData = async () => {
+    const fetchData = async () => {
       const claseId = searchParams.get("clase");
       if (claseId) {
         try {
-          const data = await fetchTestData();
-          const clase = data.clases.find((c) => c.codigo === parseInt(claseId));
+          const [
+            clases,
+            materias,
+            grupos,
+            alumnosData,
+            calificacionesData,
+            periodosData,
+            parcialesData,
+            criteriosData,
+          ] = await Promise.all([
+            getClases(),
+            getMaterias(),
+            getGrupos(),
+            getAlumnos(),
+            getCalificaciones(),
+            getPeriodos(),
+            getParciales(),
+            getCriterios(),
+          ]);
+
+          const clase = clases.find((c) => c.codigo === parseInt(claseId));
           if (clase) {
-            const materia = data.materias.find((m) => m.codigo === clase.materia);
-            const grupo = data.grupos.find((g) => g.codigo === clase.grupo);
-            const alumnosRelacionados = data.alumnos.filter((alumno) => alumno.grupo === clase.grupo);
+            const materia = materias.find((m) => m.codigo === clase.materia);
+            const grupo = grupos.find((g) => g.codigo === clase.grupo);
+            const alumnosRelacionados = alumnosData.filter((alumno) => alumno.grupo === clase.grupo);
 
             const updatedAlumnos = alumnosRelacionados.map((alumno) => {
-              const calificaciones = data.calificaciones.find(
+              const calificacionesAlumno = calificacionesData.find(
                 (cal) => cal.alumno === alumno.matricula && cal.clase === parseInt(claseId)
               );
+
               return {
                 ...alumno,
-                parcial1: calificaciones?.parcial1 ?? "",
-                parcial2: calificaciones?.parcial2 ?? "",
-                parcial3: calificaciones?.parcial3 ?? "",
-                remedial1: calificaciones?.remedial1 ?? "",
-                remedial2: calificaciones?.remedial2 ?? "",
-                remedial3: calificaciones?.remedial3 ?? "",
-                extraordinario: calificaciones?.extraordinario ?? "",
+                clave: calificacionesAlumno?.clave,
+                parcial1: calificacionesAlumno?.parcial1 ?? null,
+                parcial2: calificacionesAlumno?.parcial2 ?? null,
+                parcial3: calificacionesAlumno?.parcial3 ?? null,
               };
             });
 
             setMateriaNombre(materia ? materia.nombre : "Materia desconocida");
             setGrupoNombre(grupo ? grupo.nombre : "Grupo desconocido");
             setAlumnos(updatedAlumnos);
+            setCalificaciones(calificacionesData);
+            setPeriodos(periodosData);
+            setParciales(parcialesData);
+            setCriterios(criteriosData);
           }
         } catch (error) {
           console.error("Error al obtener los datos de la clase:", error);
@@ -59,41 +95,32 @@ export default function ParcialesPage() {
       }
     };
 
-    fetchClaseData();
+    fetchData();
   }, [searchParams]);
 
-  const handleCalificacionChange = (alumno, parcial, value) => {
-    const updatedAlumnos = alumnos.map((a) =>
-      a.matricula === alumno.matricula ? { ...a, [parcial]: parseInt(value) } : a
-    );
-    setAlumnos(updatedAlumnos);
+  const handlePeriodoChange = (e) => {
+    const periodoId = Number(e.target.value);
+    setSelectedPeriodo(periodoId);
+    setSelectedParcial(null);
   };
 
-  const handleUpdateAlumno = async (alumno) => {
-    const updatedGrade = {
-      alumno: alumno.matricula,
-      clase: parseInt(searchParams.get("clase")),
-      parcial1: alumno.parcial1,
-      parcial2: alumno.parcial2,
-      parcial3: alumno.parcial3,
-    };
+  const handleParcialChange = (e) => {
+    setSelectedParcial(Number(e.target.value));
+  };
 
+  const filteredCriterios = criterios.filter((criterio) => criterio.parcial === selectedParcial);
+  const filteredParciales = parciales.filter((parcial) => parcial.periodo === selectedPeriodo); // Filtrado de parciales
+
+  const handleUpdateCriterio = async (codigo, updatedCriterio) => {
     try {
-      const response = await fetch("/api/updateGrades", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedGrades: [updatedGrade] }),
-      });
+      await updateCriterio(codigo, updatedCriterio);
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
 
-      if (response.ok) {
-        setShowSuccessMessage(true);
-        setTimeout(() => setShowSuccessMessage(false), 3000);
-      } else {
-        alert("Error al actualizar las calificaciones.");
-      }
+      const updatedCriterios = await getCriterios();
+      setCriterios(updatedCriterios);
     } catch (error) {
-      console.error("Error al enviar los datos:", error);
-      alert("Error al enviar los datos.");
+      console.error("Error al actualizar el criterio:", error);
     }
   };
 
@@ -123,18 +150,52 @@ export default function ParcialesPage() {
             claseId={searchParams.get("clase")}
           />
 
-          <button
-            onClick={() => generatePDF(materiaNombre, grupoNombre, alumnos)}
-            className="bg-red-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-red-600 mb-4"
-          >
-            Generar Reporte PDF
-          </button>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">Seleccionar Periodo</label>
+            <select
+              value={selectedPeriodo || ""}
+              onChange={handlePeriodoChange}
+              className="w-full px-4 py-2 border text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="" disabled>
+                Selecciona un Periodo
+              </option>
+              {periodos.map((periodo) => (
+                <option key={periodo.clave} value={periodo.clave}>
+                  {`Periodo ${periodo.clave}: ${new Date(periodo.fechaInicio).toLocaleDateString()} - ${new Date(
+                    periodo.fechaCierre
+                  ).toLocaleDateString()}`}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">Seleccionar Parcial</label>
+            <select
+              value={selectedParcial || ""}
+              onChange={handleParcialChange}
+              className="w-full px-4 py-2 border text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={!selectedPeriodo}
+            >
+              <option value="" disabled>
+                Selecciona un Parcial
+              </option>
+              {filteredParciales.map((parcial) => (
+                <option key={parcial.clave} value={parcial.clave}>
+                  {parcial.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <CriteriaTable criterios={filteredCriterios} parciales={filteredParciales} onUpdateCriterio={handleUpdateCriterio} />
 
           <StudentsTable
             alumnos={alumnos}
-            setAlumnos={setAlumnos}
-            handleCalificacionChange={handleCalificacionChange}
-            handleUpdateAlumno={handleUpdateAlumno}
+            criterios={filteredCriterios}
+            selectedParcial={selectedParcial}
+            calificacionesData={calificaciones}
           />
         </div>
       </div>

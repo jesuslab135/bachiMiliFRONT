@@ -1,11 +1,27 @@
-import { useState } from "react";
-import useFetchGruposData from "./useFetchGruposData";
+import { useState, useEffect } from "react";
+import { getGrupos, getPeriodos, updateGrupo, deleteGrupo as deleteGrupoApi } from "@/app/lib/fetchTestData";
 
 export default function useGruposPage() {
-  const { registros, periodos, fetchData } = useFetchGruposData();
+  const [registros, setRegistros] = useState([]);
+  const [periodos, setPeriodos] = useState([]);
   const [selectedGrupo, setSelectedGrupo] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const gruposData = await getGrupos();
+      const periodosData = await getPeriodos();
+      setRegistros(gruposData || []);
+      setPeriodos(periodosData || []);
+    } catch (error) {
+      console.error("Error al obtener los datos de grupos y periodos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleEditClick = (grupo) => {
     setSelectedGrupo(grupo);
@@ -19,17 +35,9 @@ export default function useGruposPage() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await fetch("/api/registros/grupos", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(selectedGrupo),
-      });
-
-      if (response.ok) {
+      const response = await updateGrupo(selectedGrupo.codigo, selectedGrupo);
+      if (response) {
         await fetchData();
         setShowEditModal(false);
         setShowSuccessMessage(true);
@@ -44,15 +52,8 @@ export default function useGruposPage() {
     if (!confirm("¿Está seguro de que desea eliminar este registro?")) return;
 
     try {
-      const response = await fetch(`/api/registros/grupos`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: grupoId }),
-      });
-
-      if (response.ok) {
+      const response = await deleteGrupoApi(grupoId);
+      if (response) {
         await fetchData();
       }
     } catch (error) {

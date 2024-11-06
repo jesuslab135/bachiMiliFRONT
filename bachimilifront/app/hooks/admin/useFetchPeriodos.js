@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import { getPeriodos } from "@/app/lib/fetchTestData";
 
 export default function useFetchPeriodos() {
   const [periodos, setPeriodos] = useState([]);
@@ -7,12 +7,17 @@ export default function useFetchPeriodos() {
   useEffect(() => {
     const fetchPeriodos = async () => {
       try {
-        const data = await fetchTestData();
-        setPeriodos(data.periodos);
+        const data = await getPeriodos();
+        if (data) {
+          setPeriodos(data); // Guardamos los datos directamente en el estado
+        } else {
+          console.error("No se recibieron datos de los periodos");
+        }
       } catch (error) {
         console.error("Error al obtener los periodos:", error);
       }
     };
+
     fetchPeriodos();
   }, []);
 

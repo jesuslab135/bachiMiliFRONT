@@ -1,5 +1,7 @@
+// useFetchClaseData.js
+
 import { useState, useEffect } from "react";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import { getMaterias, getDocentes, getGrupos } from "@/app/lib/fetchTestData";
 
 export default function useFetchClaseData() {
   const [materias, setMaterias] = useState([]);
@@ -9,10 +11,13 @@ export default function useFetchClaseData() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchTestData();
-        setMaterias(data.materias);
-        setDocentes(data.docentes);
-        setGrupos(data.grupos);
+        const materiasData = await getMaterias();
+        const docentesData = await getDocentes();
+        const gruposData = await getGrupos();
+
+        setMaterias(materiasData || []);
+        setDocentes(docentesData || []);
+        setGrupos(gruposData || []);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

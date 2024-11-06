@@ -6,17 +6,18 @@ export default function GrupoForm({ formData, periodos, handleChange, handleSubm
       <h2 className="text-2xl mb-4 text-gray-700">Registrar Grupo</h2>
 
       <div>
-        <label htmlFor="nombreGrupo" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">
           Nombre del Grupo
         </label>
         <input
-          id="nombreGrupo"
-          name="nombreGrupo"
+          id="nombre"
+          name="nombre"
           type="text"
-          value={formData.nombreGrupo}
+          value={formData.nombre}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           placeholder="Nombre del Grupo"
+          required
         />
       </div>
 
@@ -30,13 +31,20 @@ export default function GrupoForm({ formData, periodos, handleChange, handleSubm
           value={formData.periodo}
           onChange={handleChange}
           className="mt-1 block w-full border text-gray-400 border-gray-300 rounded-md shadow-sm px-3 py-2"
+          required
         >
           <option value="">Seleccionar Periodo</option>
-          {periodos.map((periodo) => (
-            <option key={periodo.clave} value={periodo.clave}>
-              {`Periodo ${periodo.clave}: ${periodo.fechaInicio} - ${periodo.fechaCierre}`}
+          {periodos.length > 0 ? (
+            periodos.map((periodo) => (
+              <option key={periodo.clave} value={periodo.clave}>
+                {`Periodo ${periodo.clave}: ${periodo.fechaInicio} - ${periodo.fechaCierre}`}
+              </option>
+            ))
+          ) : (
+            <option value="" disabled>
+              No hay periodos disponibles
             </option>
-          ))}
+          )}
         </select>
       </div>
 

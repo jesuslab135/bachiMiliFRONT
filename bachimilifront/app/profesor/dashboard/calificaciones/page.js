@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import TeacherSidebar from "@/app/components/teacher/TeacherSidebar";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import { getClases, getMaterias, getGrupos } from "@/app/lib/fetchTestData";
 
 export default function CalificacionesPage() {
   const router = useRouter();
@@ -12,8 +12,6 @@ export default function CalificacionesPage() {
   useEffect(() => {
     const fetchClasesData = async () => {
       try {
-        const data = await fetchTestData();
-
         const docenteId = localStorage.getItem("docenteId");
 
         if (!docenteId) {
@@ -21,18 +19,24 @@ export default function CalificacionesPage() {
           return;
         }
 
-        const clasesData = data.clases
+        // Fetch clases, materias, y grupos
+        const clasesData = await getClases();
+        const materiasData = await getMaterias();
+        const gruposData = await getGrupos();
+
+        // Filtrar clases por docente y mapear con los nombres de materia y grupo
+        const clasesFiltradas = clasesData
           .filter((clase) => clase.docente === docenteId)
           .map((clase) => {
-            const materia = data.materias.find((mat) => mat.codigo === clase.materia);
-            const grupo = data.grupos.find((grp) => grp.codigo === clase.grupo);
+            const materia = materiasData.find((mat) => mat.codigo === clase.materia);
+            const grupo = gruposData.find((grp) => grp.codigo === clase.grupo);
             return {
               id: clase.codigo,
               nombreClase: `${materia?.nombre || "Materia desconocida"} - ${grupo?.nombre || "Grupo desconocido"}`,
             };
           });
 
-        setClases(clasesData);
+        setClases(clasesFiltradas);
       } catch (error) {
         console.error("Error al obtener los datos de clases:", error);
       }
@@ -48,7 +52,6 @@ export default function CalificacionesPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex">
       <TeacherSidebar />
-
       <div className="p-8 flex-1 mt-16 ml-64">
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-5xl mx-auto">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Clases que imparte:</h2>

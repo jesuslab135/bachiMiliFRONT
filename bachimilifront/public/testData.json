@@ -1,15 +1,4 @@
 {
-  "admin": [
-    {
-      "matricula": "ADMIN001",
-      "nomPila": "Juan",
-      "apPat": "Pérez",
-      "apMat": "Gómez",
-      "correo": "admin@example.com",
-      "telefono": "5551234567",
-      "contrasena": "Hola_Es_Nueva135"
-    }
-  ],
   "periodos": [
     {
       "clave": 1,
@@ -26,17 +15,23 @@
     {
       "clave": 1,
       "nombre": "Primer Parcial",
-      "periodo": 1
+      "periodo": 1,
+      "fechaInicio": "2024-02-01",
+      "fechaCierre": "2024-02-15"
     },
     {
       "clave": 2,
       "nombre": "Segundo Parcial",
-      "periodo": 1
+      "periodo": 1,
+      "fechaInicio": "2024-04-01",
+      "fechaCierre": "2024-04-15"
     },
     {
       "clave": 3,
       "nombre": "Tercer Parcial",
-      "periodo": 1
+      "periodo": 1,
+      "fechaInicio": "2024-06-01",
+      "fechaCierre": "2024-06-15"
     }
   ],
   "tipoAsistencias": [
@@ -56,7 +51,7 @@
   "docentes": [
     {
       "matricula": "DOC001",
-      "nomPila": "Ana",
+      "nombrePila": "Ana",
       "apPat": "López",
       "apMat": "Martínez",
       "correo": "ana.lopez@example.com",
@@ -65,7 +60,7 @@
     },
     {
       "matricula": "DOC002",
-      "nomPila": "Carlos",
+      "nombrePila": "Carlos",
       "apPat": "Ramírez",
       "apMat": "García",
       "correo": "carlos.ramirez@example.com",
@@ -74,7 +69,7 @@
     },
     {
       "matricula": "DOC003",
-      "nomPila": "Lucía",
+      "nombrePila": "Lucía",
       "apPat": "Fernández",
       "apMat": "Díaz",
       "correo": "lucia.fernandez@example.com",
@@ -83,11 +78,21 @@
     },
     {
       "matricula": "DOC004",
-      "nomPila": "Ernesto",
+      "nombrePila": "Ernesto",
       "apPat": "Serrano",
       "apMat": "Perez",
       "correo": "Ernesto.Perez@gob.edu.mx",
+      "telefono": "5557894561",
       "contrasena": "Que_Pedo_Pros"
+    },
+    {
+      "matricula": "ADMIN001",
+      "nombrePila": "Carlos",
+      "apPat": "Lugo",
+      "apMat": "Camacho",
+      "correo": "Carlos.Lugo@admin.com",
+      "telefono": "5551234567",
+      "contrasena": "Hola_Es_Nueva135"
     }
   ],
   "materias": [
@@ -112,7 +117,7 @@
     {
       "codigo": 1,
       "nombre": "Grupo A",
-      "periodo": "2024-01-01 - 2024-06-30"
+      "periodo": 1
     },
     {
       "codigo": 2,
@@ -154,12 +159,36 @@
       "materia": 4,
       "docente": "DOC004",
       "grupo": 4
+    },
+    {
+      "codigo": 5,
+      "materia": 5,
+      "docente": "DOC005",
+      "grupo": 5
+    },
+    {
+      "codigo": 6,
+      "materia": 5,
+      "docente": "DOC004",
+      "grupo": 2
+    },
+    {
+      "codigo": 7,
+      "materia": "",
+      "docente": "",
+      "grupo": null
+    },
+    {
+      "codigo": 8,
+      "materia": 5,
+      "docente": "DOC002",
+      "grupo": 3
     }
   ],
   "alumnos": [
     {
       "matricula": "ALU001",
-      "nomPila": "Armando",
+      "nombrePila": "Armando",
       "apPat": "Perez",
       "apMat": "López",
       "correo": "pedro.gonzalez@example.com",
@@ -168,7 +197,7 @@
     },
     {
       "matricula": "ALU002",
-      "nomPila": "María",
+      "nombrePila": "María",
       "apPat": "Soto",
       "apMat": "Sánchez",
       "correo": "maria.martinez@example.com",
@@ -177,7 +206,7 @@
     },
     {
       "matricula": "ALU003",
-      "nomPila": "Luis",
+      "nombrePila": "Luis",
       "apPat": "Hernández",
       "apMat": "Díaz",
       "correo": "luis.hernandez@example.com",
@@ -186,39 +215,12 @@
     },
     {
       "matricula": "ALU004",
-      "nomPila": "Jesús Ernesto",
+      "nombrePila": "Jesús Ernesto",
       "apPat": "Barrera",
       "apMat": "Almeida",
       "correo": "Jesus.Ernesto@gob.edu.mx",
       "contrasena": "Que_Tal",
       "grupo": 4
-    },
-    {
-      "matricula": "ALU005",
-      "nomPila": "Fernando",
-      "apPat": "Delgado",
-      "apMat": "Lopez",
-      "correo": "Fernando.Delgado@gob.edu.mx",
-      "contrasena": "Para_Que_Intentamos",
-      "grupo": 2
-    },
-    {
-      "matricula": "ALU006",
-      "nomPila": "Juan",
-      "apPat": "Olmos",
-      "apMat": "Najera",
-      "correo": "Juan.Najera@gob.edu.mx",
-      "contrasena": "Juan_Olmos",
-      "grupo": 1
-    },
-    {
-      "matricula": "ALU007",
-      "nomPila": "Andrea",
-      "apPat": "Suarez",
-      "apMat": "Morales",
-      "correo": "andrea.suarez@example.com",
-      "contrasena": "password654",
-      "grupo": 3
     }
   ],
   "asistencias": [
@@ -287,99 +289,39 @@
   "calificaciones": [
     {
       "clave": 1,
-      "parcial1": 5,
+      "total": 8.5,
+      "alumno": "ALU001",
+      "clase": 1,
+      "parcial1": 10,
       "parcial2": 10,
       "parcial3": 10,
-      "remedial1": "",
+      "remedial1": 10,
       "remedial2": null,
       "remedial3": null,
-      "extraordinario": 7,
-      "alumno": "ALU001",
-      "clase": 1
+      "extraordinario": 7
     },
     {
       "clave": 2,
+      "total": 9,
+      "alumno": "ALU002",
+      "clase": 2,
       "parcial1": 10,
       "parcial2": 7,
       "parcial3": 10,
       "remedial1": null,
       "remedial2": null,
       "remedial3": null,
-      "extraordinario": null,
-      "alumno": "ALU002",
-      "clase": 2
+      "extraordinario": null
     },
     {
       "clave": 3,
-      "parcial1": 8,
-      "parcial2": 9,
-      "parcial3": 9,
-      "remedial1": null,
-      "remedial2": null,
-      "remedial3": null,
-      "extraordinario": null,
-      "alumno": "ALU003",
-      "clase": 3
-    },
-    {
-      "clave": 4,
+      "alumno": "ALU005",
+      "clase": 1,
       "parcial1": 10,
       "parcial2": 10,
       "parcial3": 10,
-      "remedial1": null,
-      "remedial2": null,
-      "remedial3": null,
-      "extraordinario": null,
-      "alumno": "ALU006",
-      "clase": 1
-    },
-    {
-      "clave": 5,
-      "parcial1": 9,
-      "parcial2": 8,
-      "parcial3": 7,
-      "remedial1": null,
-      "remedial2": null,
-      "remedial3": null,
-      "extraordinario": null,
-      "alumno": "ALU004",
-      "clase": 4
-    },
-    {
-      "clave": 6,
-      "parcial1": 6,
-      "parcial2": 5,
-      "parcial3": 7,
-      "remedial1": null,
-      "remedial2": null,
-      "remedial3": null,
-      "extraordinario": null,
-      "alumno": "ALU005",
-      "clase": 2
-    },
-    {
-      "clave": 7,
-      "parcial1": 8,
-      "parcial2": 9,
-      "parcial3": 10,
-      "remedial1": null,
-      "remedial2": null,
-      "remedial3": null,
-      "extraordinario": null,
-      "alumno": "ALU007",
-      "clase": 3
-    },
-    {
-      "clave": 8,
-      "parcial1": 5,
-      "parcial2": 7,
-      "parcial3": 8,
-      "remedial1": null,
-      "remedial2": null,
-      "remedial3": null,
-      "extraordinario": null,
-      "alumno": "ALU008",
-      "clase": 4
+      "remedial": null,
+      "extraordinario": null
     }
   ],
   "actividades": [

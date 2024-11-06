@@ -1,11 +1,26 @@
-import { useState } from "react";
-import useFetchMaterias from "./useFetchMaterias";
+import { useState, useEffect } from "react";
+import { getMaterias, updateMateria, deleteMateria } from "@/app/lib/fetchTestData";
 
 export default function useMateriasPage() {
-  const { registros, fetchData } = useFetchMaterias();
+  const [registros, setRegistros] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  // Función para obtener materias
+  const fetchData = async () => {
+    try {
+      const data = await getMaterias();
+      setRegistros(data);
+    } catch (error) {
+      console.error("Error al obtener los datos de materias:", error);
+    }
+  };
+
+  // Llamada inicial para obtener datos al montar el componente
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleEditClick = (materia) => {
     setSelectedMateria(materia);
@@ -21,15 +36,8 @@ export default function useMateriasPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/registros/materias", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(selectedMateria),
-      });
-
-      if (response.ok) {
+      const response = await updateMateria(selectedMateria.codigo, selectedMateria);
+      if (response) {
         await fetchData();
         setShowEditModal(false);
         setShowSuccessMessage(true);
@@ -44,15 +52,8 @@ export default function useMateriasPage() {
     if (!confirm("¿Está seguro de que desea eliminar este registro?")) return;
 
     try {
-      const response = await fetch(`/api/registros/materias`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ codigo: materiaId }),
-      });
-
-      if (response.ok) {
+      const response = await deleteMateria(materiaId);
+      if (response) {
         await fetchData();
       }
     } catch (error) {

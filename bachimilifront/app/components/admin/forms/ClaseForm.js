@@ -1,4 +1,4 @@
-"use client";
+// ClaseForm.js
 
 export default function ClaseForm({ formData, materias, docentes, grupos, handleChange, handleSubmit }) {
   return (
@@ -14,6 +14,7 @@ export default function ClaseForm({ formData, materias, docentes, grupos, handle
           name="materia"
           value={formData.materia}
           onChange={handleChange}
+          required
           className="mt-1 block w-full border text-gray-400 border-gray-300 rounded-md shadow-sm px-3 py-2"
         >
           <option value="">Seleccionar Materia</option>
@@ -26,17 +27,18 @@ export default function ClaseForm({ formData, materias, docentes, grupos, handle
       </div>
 
       <div>
-        <label htmlFor="profesor" className="block text-sm font-medium text-gray-700">
-          Profesor
+        <label htmlFor="docente" className="block text-sm font-medium text-gray-700">
+          Docente
         </label>
         <select
-          id="profesor"
-          name="profesor"
-          value={formData.profesor}
+          id="docente"
+          name="docente"
+          value={formData.docente}
           onChange={handleChange}
+          required
           className="mt-1 block w-full border text-gray-400 border-gray-300 rounded-md shadow-sm px-3 py-2"
         >
-          <option value="">Seleccionar Profesor</option>
+          <option value="">Seleccionar Docente</option>
           {docentes.map((docente) => (
             <option key={docente.matricula} value={docente.matricula}>
               {`${docente.nombrePila} ${docente.apPat} ${docente.apMat}`}
@@ -54,6 +56,7 @@ export default function ClaseForm({ formData, materias, docentes, grupos, handle
           name="grupo"
           value={formData.grupo}
           onChange={handleChange}
+          required
           className="mt-1 block w-full border text-gray-400 border-gray-300 rounded-md shadow-sm px-3 py-2"
         >
           <option value="">Seleccionar Grupo</option>

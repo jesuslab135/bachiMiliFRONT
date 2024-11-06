@@ -1,26 +1,23 @@
+import { createDocente } from "@/app/lib/fetchTestData";
+
 export default function useSubmitProfesorForm(resetForm) {
-    const handleSubmit = async (formData) => {
-      try {
-        const response = await fetch("/api/addProfesor", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-  
-        if (response.ok) {
-          const result = await response.json();
-          alert(result.message);
-          resetForm();
-        } else {
-          alert("Error al registrar el profesor");
-        }
-      } catch (error) {
-        console.error("Error:", error);
+  const handleSubmit = async (formData) => {
+    console.log("Datos enviados para registrar docente:", formData);
+
+    try {
+      const response = await createDocente(formData);
+
+      if (response) {
+        alert("Profesor registrado exitosamente");
+        resetForm();
+      } else {
+        alert("Error al registrar el profesor");
+        console.error("Detalles del error:", response);
       }
-    };
-  
-    return handleSubmit;
-  }
-  
+    } catch (error) {
+      console.error("Error al enviar datos del profesor:", error);
+    }
+  };
+
+  return handleSubmit;
+}

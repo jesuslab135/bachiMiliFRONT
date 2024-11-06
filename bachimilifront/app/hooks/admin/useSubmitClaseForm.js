@@ -1,26 +1,30 @@
+// useSubmitClaseForm.js
+
+import { createClase } from "@/app/lib/fetchTestData";
+
 export default function useSubmitClaseForm(resetForm) {
-    const handleSubmit = async (formData) => {
-      try {
-        const response = await fetch("/api/addClase", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-  
-        if (response.ok) {
-          const result = await response.json();
-          alert(result.message);
-          resetForm();
-        } else {
-          alert("Error al registrar la clase");
-        }
-      } catch (error) {
-        console.error("Error:", error);
+  const handleSubmit = async (formData) => {
+    try {
+      const submitData = {
+        materia: formData.materia,
+        grupo: formData.grupo,
+        docente: formData.docente,
+      };
+
+      console.log("Datos enviados para registrar clase:", submitData);
+
+      const response = await createClase(submitData);
+
+      if (response) {
+        alert("Clase registrada exitosamente.");
+        resetForm();
+      } else {
+        alert("Error al registrar la clase.");
       }
-    };
-  
-    return handleSubmit;
-  }
-  
+    } catch (error) {
+      console.error("Error al enviar datos de la clase:", error);
+    }
+  };
+
+  return handleSubmit;
+}

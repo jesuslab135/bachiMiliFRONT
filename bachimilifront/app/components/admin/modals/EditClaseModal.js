@@ -41,7 +41,7 @@ export default function EditClaseModal({
             >
               {docentes.map((docente) => (
                 <option key={docente.matricula} value={docente.matricula}>
-                  {`${docente.nomPila} ${docente.apPat} ${docente.apMat}`}
+                  {`${docente.nombrePila} ${docente.apPat} ${docente.apMat}`}
                 </option>
               ))}
             </select>

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function useAlumnoForm() {
   const [formData, setFormData] = useState({
+    matricula: "",
     nomPila: "",
     apPat: "",
     apMat: "",
@@ -14,12 +15,13 @@ export default function useAlumnoForm() {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === "grupo" ? parseInt(value, 10) || "" : value,
     }));
   };
 
   const resetForm = () => {
     setFormData({
+      matricula: "",
       nomPila: "",
       apPat: "",
       apMat: "",

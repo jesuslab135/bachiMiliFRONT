@@ -1,50 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchTestData } from "./lib/fetchTestData";
+import { loginDocente } from "@/app/lib/fetchTestData";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    fetchTestData()
-      .then((data) => {
-        console.log("Datos de prueba:", data);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los datos de prueba:", error);
-      });
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const data = await fetchTestData();
-
-      // Encuentra al usuario en los datos de prueba
-      const user = data.docentes.find(
-        (docente) => docente.correo === email && docente.contrasena === password
-      ) || data.admin.find(
-        (admin) => admin.correo === email && admin.contrasena === password
-      );
-
+      const user = await loginDocente(email, password);
+  
       if (user) {
-        const nombreCompleto = `${user.nomPila} ${user.apPat} ${user.apMat || ""}`.trim();
-
-        // Verifica si el usuario es admin o docente y guarda en localStorage
-        if (data.admin.some((admin) => admin.correo === email)) {
+        const nombreCompleto = `${user.nombrePila} ${user.apPat} ${user.apMat || ""}`.trim();
+  
+        if (user.matricula === "ADMIN001") {
           localStorage.setItem("adminName", nombreCompleto);
           router.push("/admin/dashboard/registros/alumnos");
         } else {
-          // Guardar `teacherName` y `docenteId` en localStorage si es docente
           localStorage.setItem("teacherName", nombreCompleto);
-          localStorage.setItem("docenteId", user.matricula); // Guardar el ID del docente
+          localStorage.setItem("docenteId", user.matricula);
           router.push("/profesor/dashboard/calificaciones");
         }
       } else {

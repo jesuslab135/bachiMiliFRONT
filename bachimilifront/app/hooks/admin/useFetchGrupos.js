@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import { getGrupos } from "@/app/lib/fetchTestData";
 
 export default function useFetchGrupos() {
   const [grupos, setGrupos] = useState([]);
@@ -7,8 +7,8 @@ export default function useFetchGrupos() {
   useEffect(() => {
     const fetchGrupos = async () => {
       try {
-        const data = await fetchTestData();
-        setGrupos(data.grupos);
+        const data = await getGrupos();
+        setGrupos(data);
       } catch (error) {
         console.error("Error al obtener los grupos:", error);
       }

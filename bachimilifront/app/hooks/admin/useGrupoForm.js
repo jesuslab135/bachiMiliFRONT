@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export default function useGrupoForm() {
   const [formData, setFormData] = useState({
-    nombreGrupo: "",
+    nombre: "",
     periodo: "",
   });
 
@@ -10,13 +10,13 @@ export default function useGrupoForm() {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === "periodo" ? parseInt(value, 10) : value, // Convert periodo to number
+      [name]: name === "periodo" ? parseInt(value, 10) : value, // Convertir periodo a número
     }));
   };
 
   const resetForm = () => {
     setFormData({
-      nombreGrupo: "",
+      nombre: "",
       periodo: "",
     });
   };

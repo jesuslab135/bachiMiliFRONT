@@ -1,31 +1,27 @@
+import { createAlumno } from "@/app/lib/fetchTestData";
+
 export default function useSubmitAlumnoForm(resetForm) {
-    const handleSubmit = async (formData) => {
-      const submitData = {
-        ...formData,
-        grupo: parseInt(formData.grupo, 10),
-      };
-  
-      try {
-        const response = await fetch("/api/addAlumno", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(submitData),
-        });
-  
-        if (response.ok) {
-          const result = await response.json();
-          alert(result.message);
-          resetForm();
-        } else {
-          alert("Error al registrar el alumno");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
+  const handleSubmit = async (formData) => {
+    const submitData = {
+      ...formData,
+      grupo: parseInt(formData.grupo, 10),
     };
-  
-    return handleSubmit;
-  }
-  
+
+    try {
+      console.log("Datos enviados:", submitData);
+
+      const response = await createAlumno(submitData);
+
+      if (response) {
+        alert("Alumno registrado exitosamente");
+        resetForm();
+      } else {
+        alert("Error al registrar el alumno. Verifica que todos los campos sean correctos.");
+      }
+    } catch (error) {
+      console.error("Error al enviar datos del alumno:", error);
+    }
+  };
+
+  return handleSubmit;
+}

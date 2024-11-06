@@ -22,7 +22,7 @@ export default function RemedialesPage() {
 
   const handleRemedialChange = (alumno, remedial, value) => {
     setAlumnos((prev) =>
-      prev.map((a) => (a.matricula === alumno.matricula ? { ...a, [remedial]: parseInt(value) } : a))
+      prev.map((a) => (a.matricula === alumno.matricula ? { ...a, [remedial]: Number(value) || null } : a))
     );
   };
 

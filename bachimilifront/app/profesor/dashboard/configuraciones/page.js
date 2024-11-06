@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import TeacherSidebar from "@/app/components/teacher/TeacherSidebar";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import { getDocente, updateDocente } from "@/app/lib/fetchTestData";
 
 export default function ConfiguracionesPage() {
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
@@ -12,9 +12,11 @@ export default function ConfiguracionesPage() {
 
   useEffect(() => {
     async function loadTeacherData() {
-      const data = await fetchTestData();
-      const docente = data.docentes.find(d => d.matricula === "DOC001"); // Cambia "DOC001" por el ID adecuado
-      setTeacherData(docente);
+      const docenteId = localStorage.getItem("docenteId"); // Obtiene el ID del docente
+      if (docenteId) {
+        const docente = await getDocente(docenteId);
+        setTeacherData(docente);
+      }
     }
     loadTeacherData();
   }, []);
@@ -25,17 +27,11 @@ export default function ConfiguracionesPage() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/configuraciones", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          matricula: teacherData.matricula,
-          nuevaContrasena: newPassword,
-        }),
+      const response = await updateDocente(teacherData.matricula, {
+        ...teacherData,
+        contrasena: newPassword, // Actualiza solo el campo de contraseña
       });
-      if (response.ok) {
+      if (response) {
         setShowConfirmationModal(true);
       }
     } catch (error) {

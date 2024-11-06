@@ -17,8 +17,8 @@ export default function EditProfesorModal({
             <label className="block text-gray-700 font-semibold mb-2">Nombre</label>
             <input
               type="text"
-              name="nomPila"
-              value={selectedProfesor.nomPila}
+              name="nombrePila"
+              value={selectedProfesor.nombrePila}
               onChange={handleEditChange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

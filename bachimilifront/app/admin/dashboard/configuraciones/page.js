@@ -1,22 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import AdminSidebar from "@/app/components/admin/AdminSidebar";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import TeacherSidebar from "@/app/components/teacher/TeacherSidebar";
+import { getDocente, updateDocente } from "@/app/lib/fetchTestData";
 
 export default function ConfiguracionesPage() {
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [newPassword, setNewPassword] = useState("");
-  const [adminData, setAdminData] = useState(null);
+  const [teacherData, setTeacherData] = useState(null);
 
   useEffect(() => {
-    async function loadAdminData() {
-      const data = await fetchTestData();
-      const admin = data.admin.find(a => a.matricula === "ADMIN001"); // Cambia "ADMIN001" por el ID adecuado
-      setAdminData(admin);
+    async function loadTeacherData() {
+      const docenteId = localStorage.getItem("docenteId"); // Obtener el ID del docente
+      if (docenteId) {
+        const docente = await getDocente(docenteId);
+        setTeacherData(docente);
+      }
     }
-    loadAdminData();
+    loadTeacherData();
   }, []);
 
   const openChangePasswordModal = () => setShowChangePasswordModal(true);
@@ -25,17 +27,11 @@ export default function ConfiguracionesPage() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/configuraciones", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          matricula: adminData.matricula,
-          nuevaContrasena: newPassword,
-        }),
+      const response = await updateDocente(teacherData.matricula, {
+        ...teacherData,
+        contrasena: newPassword,
       });
-      if (response.ok) {
+      if (response) {
         setShowConfirmationModal(true);
       }
     } catch (error) {
@@ -49,17 +45,17 @@ export default function ConfiguracionesPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      <AdminSidebar />
+      <TeacherSidebar />
 
       <div className="p-4 flex-1 mt-16 ml-64">
         <div className="bg-white p-6 rounded-lg shadow-md max-w-5xl mx-auto">
           <h2 className="text-2xl font-semibold mb-4 text-gray-500">Configuraciones</h2>
-
-          {adminData && (
+          
+          {teacherData && (
             <div className="bg-white border border-gray-200 p-4 rounded-lg text-gray-500">
               <h3 className="text-xl font-semibold mb-4">Usuario</h3>
-              <p className="text-gray-800"><strong>Usuario:</strong> {adminData.matricula}</p>
-              <p className="text-gray-800 mb-4"><strong>Cuenta institucional:</strong> {adminData.correo}</p>
+              <p className="text-gray-800"><strong>Usuario:</strong> {teacherData.matricula}</p>
+              <p className="text-gray-800 mb-4"><strong>Cuenta institucional:</strong> {teacherData.correo}</p>
               <button
                 onClick={openChangePasswordModal}
                 className="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700"

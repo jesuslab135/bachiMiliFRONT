@@ -2,9 +2,8 @@ import { useState } from "react";
 
 export default function useClaseForm() {
   const [formData, setFormData] = useState({
-    nombreClase: "",
     materia: "",
-    profesor: "",
+    docente: "",
     grupo: "",
   });
 
@@ -18,9 +17,8 @@ export default function useClaseForm() {
 
   const resetForm = () => {
     setFormData({
-      nombreClase: "",
       materia: "",
-      profesor: "",
+      docente: "",
       grupo: "",
     });
   };

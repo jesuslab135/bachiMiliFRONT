@@ -6,19 +6,37 @@ export default function ProfesorForm({ formData, handleChange, handleSubmit }) {
       <h2 className="text-2xl mb-4 text-gray-700">Registrar Profesor</h2>
 
       <div>
-        <label htmlFor="nomPila" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="matricula" className="block text-sm font-medium text-gray-700">
+          Matrícula
+        </label>
+        <input
+          id="matricula"
+          name="matricula"
+          type="text"
+          value={formData.matricula}
+          onChange={handleChange}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+          placeholder="Matrícula"
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="nombrePila" className="block text-sm font-medium text-gray-700">
           Nombre
         </label>
         <input
-          id="nomPila"
-          name="nomPila"
+          id="nombrePila"
+          name="nombrePila"
           type="text"
-          value={formData.nomPila}
+          value={formData.nombrePila}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           placeholder="Nombre del profesor"
+          required
         />
       </div>
+
       <div>
         <label htmlFor="apPat" className="block text-sm font-medium text-gray-700">
           Apellido Paterno
@@ -31,8 +49,10 @@ export default function ProfesorForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           placeholder="Apellido Paterno"
+          required
         />
       </div>
+
       <div>
         <label htmlFor="apMat" className="block text-sm font-medium text-gray-700">
           Apellido Materno
@@ -47,6 +67,7 @@ export default function ProfesorForm({ formData, handleChange, handleSubmit }) {
           placeholder="Apellido Materno"
         />
       </div>
+
       <div>
         <label htmlFor="correo" className="block text-sm font-medium text-gray-700">
           Correo Electrónico
@@ -59,8 +80,26 @@ export default function ProfesorForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           placeholder="Correo"
+          required
         />
       </div>
+
+      <div>
+        <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">
+          Teléfono
+        </label>
+        <input
+          id="telefono"
+          name="telefono"
+          type="text"
+          value={formData.telefono}
+          onChange={handleChange}
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+          placeholder="Teléfono"
+          required
+        />
+      </div>
+
       <div>
         <label htmlFor="contrasena" className="block text-sm font-medium text-gray-700">
           Contraseña
@@ -73,6 +112,7 @@ export default function ProfesorForm({ formData, handleChange, handleSubmit }) {
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           placeholder="Contraseña"
+          required
         />
       </div>
 

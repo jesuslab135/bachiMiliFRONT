@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchTestData } from "@/app/lib/fetchTestData";
+import { getClases, getMaterias, getGrupos, getAlumnos, getCalificaciones } from "@/app/lib/fetchTestData";
 import { useSearchParams } from "next/navigation";
 
 export default function useFetchExtraordinariosData() {
@@ -13,28 +13,39 @@ export default function useFetchExtraordinariosData() {
       const claseId = searchParams.get("clase");
       if (claseId) {
         try {
-          const data = await fetchTestData();
-          const clase = data.clases.find((c) => c.codigo === parseInt(claseId));
+          const [clases, materias, grupos, alumnosData, calificaciones] = await Promise.all([
+            getClases(),
+            getMaterias(),
+            getGrupos(),
+            getAlumnos(),
+            getCalificaciones(),
+          ]);
+
+          const clase = clases.find((c) => c.codigo === parseInt(claseId));
           if (clase) {
-            const materia = data.materias.find((m) => m.codigo === clase.materia);
-            const grupo = data.grupos.find((g) => g.codigo === clase.grupo);
-            const alumnosRelacionados = data.alumnos.filter((alumno) => alumno.grupo === clase.grupo);
+            const materia = materias.find((m) => m.codigo === clase.materia);
+            const grupo = grupos.find((g) => g.codigo === clase.grupo);
+            const alumnosRelacionados = alumnosData.filter((alumno) => alumno.grupo === clase.grupo);
 
             const updatedAlumnos = alumnosRelacionados.map((alumno) => {
-              const calificaciones = data.calificaciones.find(
+              const calificacionesAlumno = calificaciones.find(
                 (c) => c.alumno === alumno.matricula && c.clase === parseInt(claseId)
               );
-              const remedial1 = calificaciones?.remedial1 ?? null;
-              const remedial2 = calificaciones?.remedial2 ?? null;
-              const remedial3 = calificaciones?.remedial3 ?? null;
-              const enableExtraordinario = [remedial1, remedial2, remedial3].some((score) => score < 6 && score !== null);
+
+              const remedial1 = calificacionesAlumno?.remedial1 ?? null;
+              const remedial2 = calificacionesAlumno?.remedial2 ?? null;
+              const remedial3 = calificacionesAlumno?.remedial3 ?? null;
+              const enableExtraordinario = [remedial1, remedial2, remedial3].some(
+                (score) => score < 6 && score !== null
+              );
 
               return {
                 ...alumno,
+                clave: calificacionesAlumno?.clave,  // Aseguramos que clave esté en cada alumno
                 remedial1,
                 remedial2,
                 remedial3,
-                extraordinario: enableExtraordinario ? calificaciones?.extraordinario || "" : null,
+                extraordinario: enableExtraordinario ? calificacionesAlumno?.extraordinario || "" : null,
                 enableExtraordinario,
               };
             });

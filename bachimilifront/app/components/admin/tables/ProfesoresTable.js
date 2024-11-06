@@ -16,7 +16,7 @@ export default function ProfesoresTable({ registros, onEdit, onDelete }) {
           {registros.map((profesor, index) => (
             <tr key={profesor.matricula} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} hover:bg-gray-200`}>
               <td className="p-3 text-sm text-gray-700">{profesor.matricula}</td>
-              <td className="p-3 text-sm text-gray-700">{`${profesor.nomPila} ${profesor.apPat} ${profesor.apMat || ""}`}</td>
+              <td className="p-3 text-sm text-gray-700">{`${profesor.nombrePila} ${profesor.apPat} ${profesor.apMat || ""}`}</td>
               <td className="p-3 text-sm text-gray-700">{profesor.correo}</td>
               <td className="p-3 text-sm text-gray-700 space-x-2">
                 <button

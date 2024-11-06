@@ -24,6 +24,7 @@ export default function StudentTableRemediales({ alumnos, handleRemedialChange, 
                   onChange={(e) => handleRemedialChange(alumno, remedial, e.target.value)}
                   disabled={alumno[remedial] === null}
                 >
+                  <option value="">N/A</option>
                   {[5, 6, 7, 8, 9, 10].map((score) => (
                     <option key={score} value={score}>
                       {score}

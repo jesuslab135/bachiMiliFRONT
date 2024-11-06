@@ -1,3 +1,4 @@
+// ExtraordinariosPage.js
 "use client";
 
 import { useState } from "react";
@@ -5,19 +6,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import TeacherSidebar from "@/app/components/teacher/TeacherSidebar";
 import useFetchExtraordinariosData from "@/app/hooks/teacher/useFetchExtraordinariosData";
-import useUpdateExtraordinario from "@/app/hooks/teacher/useUpdateExtraordinario";
+import useUpdateExtraordinario from "@/app/hooks/teacher/useUpdateExtraordinario"; // Importar el hook
 import SuccessMessage from "@/app/components/teacher/SuccessMessage";
 import Tabs from "@/app/components/teacher/Tabs";
 import ExtraordinariosTable from "@/app/components/teacher/ExtraordinariosTable";
 
 export default function ExtraordinariosPage() {
   const { materiaNombre, grupoNombre, alumnos, setAlumnos } = useFetchExtraordinariosData();
-  const { showSuccessMessage, errorMessage, updateExtraordinario } = useUpdateExtraordinario();
+  const { showSuccessMessage, errorMessage, handleUpdateAlumno } = useUpdateExtraordinario(); // Extraer handleUpdateAlumno
   const [activeTab, setActiveTab] = useState("calificaciones");
   const [currentView, setCurrentView] = useState("extraordinario");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const claseId = searchParams.get("clase"); // Obtener `claseId` de `searchParams`
+  const claseId = searchParams.get("clase");
 
   const handleExtraordinarioChange = (alumno, value) => {
     const updatedAlumnos = alumnos.map((a) =>
@@ -26,14 +27,8 @@ export default function ExtraordinariosPage() {
     setAlumnos(updatedAlumnos);
   };
 
-  const handleUpdateAlumno = (alumno) => {
-    const extraordinarioUpdate = {
-      alumno: alumno.matricula,
-      clase: parseInt(claseId),
-      extraordinario: alumno.extraordinario,
-    };
-
-    updateExtraordinario(extraordinarioUpdate);
+  const handleUpdateAlumnoClick = (alumno) => {
+    handleUpdateAlumno(alumno, claseId); // Llamada a la función handleUpdateAlumno
   };
 
   return (
@@ -57,12 +52,12 @@ export default function ExtraordinariosPage() {
             currentView={currentView}
             setCurrentView={setCurrentView}
             router={router}
-            claseId={claseId} // Pasar `claseId` aquí
+            claseId={claseId}
           />
           <ExtraordinariosTable
             alumnos={alumnos}
             handleExtraordinarioChange={handleExtraordinarioChange}
-            handleUpdateAlumno={handleUpdateAlumno}
+            handleUpdateAlumno={handleUpdateAlumnoClick} // Pasar la función correcta
           />
         </div>
       </div>

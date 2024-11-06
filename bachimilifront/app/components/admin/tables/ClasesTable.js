@@ -3,7 +3,7 @@
 export default function ClasesTable({ registros, docentes, materias, grupos, onEdit, onDelete }) {
   const getDocenteNombre = (matricula) => {
     const docente = docentes.find((doc) => doc.matricula === matricula);
-    return docente ? `${docente.nomPila} ${docente.apPat} ${docente.apMat}` : "Docente no encontrado";
+    return docente ? `${docente.nombrePila} ${docente.apPat} ${docente.apMat}` : "Docente no encontrado";
   };
 
   const getMateriaNombre = (codigo) => {
