@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { getAsistencias, updateCalificacion } from "@/app/lib/fetchTestData";
+import SuccessMessage from "../admin/messages/SuccessMessage"; // Asegúrate de importar el componente correctamente
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 export default function StudentsTable({
   alumnos,
-  criterios,
-  selectedPeriodo, // <-- Añadir selectedPeriodo como prop
+  criterios = [],
+  selectedPeriodo,
   selectedParcial,
   selectedParcialDates,
   calificacionesData,
   updateCalificacionesData,
+  claseId,
 }) {
   const [examScores, setExamScores] = useState({});
   const [attendanceData, setAttendanceData] = useState({});
   const [parcialScores, setParcialScores] = useState({});
+  const [criteriosHeaders, setCriteriosHeaders] = useState([]);
+  const [showMessage, setShowMessage] = useState(false); // Estado para controlar el mensaje de éxito
 
   useEffect(() => {
     const fetchAttendanceData = async () => {
@@ -35,9 +39,16 @@ export default function StudentsTable({
     fetchAttendanceData();
   }, []);
 
+  useEffect(() => {
+    const headers = criterios.map((criterio) => criterio.tipo);
+    setCriteriosHeaders(headers);
+  }, [criterios, claseId]);
+
   const calculateCriterion = (alumnoMatricula, tipoActividad) => {
     const asistenciaAlumno = attendanceData[alumnoMatricula] || [];
-    const criterio = criterios.find((c) => c.tipo === tipoActividad);
+    const criterio = criterios.find(
+      (c) => c.tipo === tipoActividad && Number(c.clase) === Number(claseId) && Number(c.parcial) === Number(selectedParcial)
+    );
     const valorPorcentaje = criterio ? parseInt(criterio.valorPorcentaje, 10) : 0;
 
     const asistenciaValida = asistenciaAlumno.filter((asistencia) => {
@@ -62,10 +73,6 @@ export default function StudentsTable({
       : "0.00";
   };
 
-  const calculateTA = (alumnoMatricula) => calculateCriterion(alumnoMatricula, "TA");
-  const calculateTE = (alumnoMatricula) => calculateCriterion(alumnoMatricula, "TE");
-  const calculateTI = (alumnoMatricula) => calculateCriterion(alumnoMatricula, "TI");
-
   const calculateInasPercentage = (alumnoMatricula) => {
     const asistenciaAlumno = attendanceData[alumnoMatricula] || [];
     const totalAsistencias = asistenciaAlumno.length;
@@ -78,17 +85,34 @@ export default function StudentsTable({
       : "0.00";
   };
 
+  // Restaurar la función `getParcialScore` para obtener el valor guardado en el parcial
+  const getParcialScore = (alumnoMatricula) => {
+    const calificacion = calificacionesData.find((c) => c.alumno === alumnoMatricula);
+    if (calificacion) {
+      return calificacion[`parcial${selectedParcial}`] || "";
+    }
+    return "";
+  };
+
   const calculateParcial = (alumnoMatricula, exScore) => {
-    const ta = parseFloat(calculateTA(alumnoMatricula));
-    const te = parseFloat(calculateTE(alumnoMatricula));
-    const ti = parseFloat(calculateTI(alumnoMatricula));
-    const ex = exScore || 0;
-    const total = ta + te + ti + ex;
-    return total.toFixed(2);
+    const totalScore = criteriosHeaders.reduce((acc, tipo) => {
+      const criterionScore = parseFloat(calculateCriterion(alumnoMatricula, tipo)) || 0;
+      return acc + criterionScore;
+    }, exScore || 0);
+    return totalScore.toFixed(2);
   };
 
   const handleExamScoreChange = (alumnoMatricula, newScore) => {
-    setExamScores((prevScores) => ({ ...prevScores, [alumnoMatricula]: newScore }));
+    setExamScores((prevScores) => {
+      const updatedScores = { ...prevScores, [alumnoMatricula]: newScore };
+
+      // Guardar la selección en localStorage para que persista
+      const savedScores = JSON.parse(localStorage.getItem("examScores")) || {};
+      savedScores[selectedParcial] = updatedScores;
+      localStorage.setItem("examScores", JSON.stringify(savedScores));
+
+      return updatedScores;
+    });
     const newParcialScore = calculateParcial(alumnoMatricula, newScore);
     setParcialScores((prevScores) => ({
       ...prevScores,
@@ -96,30 +120,34 @@ export default function StudentsTable({
     }));
   };
 
+  useEffect(() => {
+    // Cargar la selección guardada de examScores desde localStorage al cambiar de parcial
+    const savedExamScores = JSON.parse(localStorage.getItem("examScores")) || {};
+    setExamScores(savedExamScores[selectedParcial] || {});
+  }, [selectedParcial]);
+
   const handleUpdateClick = async (alumnoMatricula) => {
     const exScore = examScores[alumnoMatricula] || 0;
     const newParcialScore = calculateParcial(alumnoMatricula, exScore);
-  
+
     const calificacion = calificacionesData.find(
       (c) => c.alumno === alumnoMatricula
     );
-  
+
     if (calificacion) {
       const updatedData = { clave: calificacion.clave };
       updatedData[`parcial${selectedParcial}`] = parseFloat(newParcialScore);
-  
-      console.log("Datos antes de actualizar en la base de datos:", updatedData);
-  
+
       try {
         const response = await updateCalificacion(calificacion.clave, updatedData);
-        console.log("Respuesta de la API:", response);
-  
         if (response && response.success) {
           updateCalificacionesData({
             ...calificacion,
             [`parcial${selectedParcial}`]: parseFloat(newParcialScore),
           });
-          console.log("Calificación actualizada exitosamente en la base de datos.");
+          // Muestra el mensaje de éxito y ocúltalo después de 3 segundos
+          setShowMessage(true);
+          setTimeout(() => setShowMessage(false), 3000);
         } else {
           console.warn("La actualización no fue exitosa:", response.message || response);
         }
@@ -138,15 +166,13 @@ export default function StudentsTable({
     doc.setFontSize(12);
     doc.text(`Parcial ${selectedParcial}`, 14, 30);
 
-    const tableColumn = ["Alumno", "TA", "TE", "TI", "Ex", `Parcial ${selectedParcial}`, "INAS"];
+    const tableColumn = ["Alumno", ...criteriosHeaders, "Ex", `Parcial ${selectedParcial}`, "INAS"];
     const tableRows = [];
 
     alumnos.forEach((alumno) => {
       const rowData = [
         `${alumno.nomPila} ${alumno.apPat} ${alumno.apMat || ""}`,
-        `${calculateTA(alumno.matricula)}%`,
-        `${calculateTE(alumno.matricula)}%`,
-        `${calculateTI(alumno.matricula)}%`,
+        ...criteriosHeaders.map((tipo) => `${calculateCriterion(alumno.matricula, tipo)}%`),
         examScores[alumno.matricula] || "Selec",
         parcialScores[alumno.matricula] || calculateParcial(alumno.matricula, examScores[alumno.matricula] || 0),
         `${calculateInasPercentage(alumno.matricula)}%`,
@@ -163,13 +189,9 @@ export default function StudentsTable({
     doc.save("reporte_calificaciones.pdf");
   };
 
-  // Condición para mostrar la tabla solo si selectedPeriodo y selectedParcial están definidos
-  if (!selectedPeriodo || !selectedParcial) {
-    return <div className="text-gray-500">Por favor, selecciona un periodo y un parcial para ver la lista de alumnos.</div>;
-  }
-
   return (
     <div>
+      <SuccessMessage showMessage={showMessage} />
       <button
         onClick={handleGeneratePDF}
         className="mb-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -181,11 +203,13 @@ export default function StudentsTable({
         <thead>
           <tr className="bg-blue-500 text-white">
             <th className="py-3 px-4 border text-left">Alumno</th>
-            <th className="py-3 px-4 border text-center">TA</th>
-            <th className="py-3 px-4 border text-center">TE</th>
-            <th className="py-3 px-4 border text-center">TI</th>
+            {criteriosHeaders.map((header, index) => (
+              <th key={index} className="py-3 px-4 border text-center">
+                {header}
+              </th>
+            ))}
             <th className="py-3 px-4 border text-center">Ex</th>
-            <th className="py-3 px-4 border text-center">Parcial {selectedParcial}</th>
+            <th className="py-3 px-4 border text-center">Parcial</th>
             <th className="py-3 px-4 border text-center bg-red-500">INAS</th>
             <th className="py-3 px-4 border text-center">Acciones</th>
           </tr>
@@ -196,9 +220,11 @@ export default function StudentsTable({
               <td className="py-3 px-4 border text-gray-700 font-semibold">
                 {`${alumno.nomPila} ${alumno.apPat} ${alumno.apMat || ""}`}
               </td>
-              <td className="py-3 px-4 border text-gray-500 text-center">{calculateTA(alumno.matricula)}%</td>
-              <td className="py-3 px-4 border text-gray-500 text-center">{calculateTE(alumno.matricula)}%</td>
-              <td className="py-3 px-4 border text-gray-500 text-center">{calculateTI(alumno.matricula)}%</td>
+              {criteriosHeaders.map((header) => (
+                <td key={header} className="py-3 px-4 border text-gray-500 text-center">
+                  {calculateCriterion(alumno.matricula, header)}%
+                </td>
+              ))}
               <td className="py-3 px-4 border text-gray-500 text-center">
                 <select
                   value={examScores[alumno.matricula] || ""}
@@ -214,7 +240,7 @@ export default function StudentsTable({
                 </select>
               </td>
               <td className="py-3 px-4 border text-gray-500 text-center">
-                {parcialScores[alumno.matricula] || calculateParcial(alumno.matricula, examScores[alumno.matricula] || 0)}
+                {parcialScores[alumno.matricula] || getParcialScore(alumno.matricula)}
               </td>
               <td className="py-3 px-4 border text-center text-red-600">{calculateInasPercentage(alumno.matricula)}%</td>
               <td className="py-3 px-4 border text-gray-500 text-center">

@@ -3,7 +3,7 @@ import React from "react";
 export default function AttendanceNav({ activeTab, setActiveTab, router, claseId }) {
   const goToParciales = () => {
     setActiveTab("calificaciones");
-    router.push(`/profesor/dashboard/calificaciones/parciales?clase=${claseId}`);
+    router.push(`/profesor/dashboard/calificaciones/parciales/parcial1?clase=${claseId}`);
   };
 
   return (

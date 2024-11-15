@@ -12,6 +12,7 @@ export default function AsistenciasPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const claseId = searchParams.get("clase");
+  const parcialId = searchParams.get("parcial"); // Obtener parcialId desde la URL
   const [activeTab, setActiveTab] = useState("asistencias");
 
   const {
@@ -112,7 +113,13 @@ export default function AsistenciasPage() {
             </select>
           </div>
 
-          <AttendanceNav activeTab={activeTab} setActiveTab={setActiveTab} router={router} claseId={claseId} />
+          <AttendanceNav
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            router={router}
+            claseId={claseId}
+            parcialId={parcialId} // Pasar parcialId como prop
+          />
           <MonthNavigator
             currentDate={currentDate}
             handlePreviousMonth={handlePreviousMonth}

@@ -46,8 +46,10 @@ export default function CalificacionesPage() {
   }, []);
 
   const handleClaseClick = (clase) => {
-    router.push(`/profesor/dashboard/calificaciones/parciales?clase=${clase.id}`);
-  };
+    const defaultParcial = "1"; // Cambia a otro parcial según lo que desees
+    router.push(`/profesor/dashboard/calificaciones/parciales/parcial${defaultParcial}?clase=${clase.id}`);
+};
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex">

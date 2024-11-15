@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -37,6 +37,8 @@ export default function ParcialesPage() {
   const [claseId, setClaseId] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const parcialId = searchParams.get("parcial") || "parcial1";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,18 +111,24 @@ export default function ParcialesPage() {
     setSelectedParcial(null);
   };
 
+
+
   const handleParcialChange = (e) => {
     const parcialId = Number(e.target.value);
     setSelectedParcial(parcialId);
 
     const selectedParcialData = parciales.find((parcial) => parcial.clave === parcialId);
     if (selectedParcialData) {
-      setSelectedParcialDates({
+       setSelectedParcialDates({
         fechaInicio: new Date(selectedParcialData.fechaInicio),
         fechaCierre: new Date(selectedParcialData.fechaCierre),
-      });
+    });
+
+    // Redirigir a la URL deseada según el parcial seleccionado
+    router.push(`/profesor/dashboard/calificaciones/parciales/parcial${parcialId}?clase=${claseId}`);
     }
-  };
+};
+
 
   const updateCalificacionesData = (updatedCalificacion) => {
     setCalificaciones((prevCalificaciones) =>
@@ -148,6 +156,8 @@ export default function ParcialesPage() {
     }
   };
 
+  console.log("Clase ID en el componente principal:", claseId);
+
   return (
     <div className="min-h-screen bg-gray-100 flex">
       <TeacherSidebar />
@@ -172,6 +182,7 @@ export default function ParcialesPage() {
             setCurrentView={setCurrentView}
             router={router}
             claseId={claseId}
+            parcialId={parcialId}
           />
 
           <div className="mb-4">
@@ -220,8 +231,10 @@ export default function ParcialesPage() {
             claseId={claseId}
           />
 
+              
           <StudentsTable
             alumnos={alumnos}
+            claseId={claseId}
             criterios={filteredCriterios}
             selectedPeriodo={selectedPeriodo}
             selectedParcial={selectedParcial}

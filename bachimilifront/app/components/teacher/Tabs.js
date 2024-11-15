@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Tabs({ activeTab, setActiveTab, currentView, setCurrentView, router, claseId }) {
+export default function Tabs({ activeTab, setActiveTab, currentView, setCurrentView, router, claseId, parcialId }) {
   const goToAsistencias = () => {
     setActiveTab("asistencias");
     router.push(`/profesor/dashboard/asistencias?clase=${claseId}`);
@@ -8,7 +8,7 @@ export default function Tabs({ activeTab, setActiveTab, currentView, setCurrentV
 
   const goToParciales = () => {
     setCurrentView("parciales");
-    router.push(`/profesor/dashboard/calificaciones/parciales?clase=${claseId}`);
+    router.push(`/profesor/dashboard/calificaciones/parciales/${parcialId}?clase=${claseId}`);
   };
 
   const goToRemediales = () => {
